@@ -96,6 +96,11 @@ Now vi into /etc/ansible/hosts and paste this all your host Ip
 52.91.235.177 ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
 172.31.87.249 ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
 
+you can also user a sever username and password
+[k8s]
+172.31.87.249 ansible_user=kops    ansible_password=your password you created
+
+
 vi  /etc/ansible/ansible.cfg
 You will see a link in there to see the full file on github
 Copy the file and paste in the vi /etc/ansible/ansible.cfg
@@ -107,3 +112,11 @@ vi into /tmp/ansible.pem and paste the key in there
 change the permission of the key using "sudo chmod 400 /tmp/ansible.pem
 
 Note to run any thing in ansible that need elevated right and permission at th end of the command just pass "-b"
+
+
+How to export ssh into which host manually/locally
+you will run ssh-keygen to create the ssh
+ls -a and you will see the private and prublic sshh
+To copy the ssh into which ip address then you will use the command "ssh-copy-id ec2-user@the ipaddress"
+Instead of running the command this can be done using the playbook. 
+This will enable you to ssh into the server without using any key
