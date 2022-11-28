@@ -1,0 +1,15 @@
+Ansible is agentless, it does not require a client software before it can manage a host. 
+Ansible can be used for
+1. UsersMGT
+2. FileMGT
+3. ServicesMGT
+4. PackagesMGT
+Ansible is an open source configuration management, deployment tool and also for provisioning tools maintained by Redhat. 
+It can manage more than 50 server  of dbserver, webservers and appserver at tthe same time 
+
+Ansible installation in ubuntu
+sudo addsuser ansible
+echo "ansible ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansibe
+sudo su - ansible
+sudo apt-add-repository ppa:ansible/ansible
+sudo apt install ansible -y
