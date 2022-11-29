@@ -116,7 +116,8 @@ Note to run any thing in ansible that need elevated right and permission at th e
 
 How to export ssh into which host manually/locally
 you will run ssh-keygen to create the ssh
-ls -a and you will see the private and prublic sshh
+To create more secure key use the command "ssh-keygen -t ed25519 -c
+ls -a  you will see .ssh, cd into .ssh and you will see the private and public sshh
 To copy the ssh into which ip address then you will use the command "ssh-copy-id ec2-user@the ipaddress"
 Instead of running the command this can be done using the playbook. 
 This will enable you to ssh into the server without using any key
