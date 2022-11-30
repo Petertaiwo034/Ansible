@@ -168,6 +168,8 @@ This is the playbook to deploy the key to all server so you can access them henc
       name=sshd
       state=restarted
 This will enable you to ssh into the server without using any key
+
+All ansible secret and confidental data is stored is ANSIBLE VAULT
 Footer
 © 2022 GitHub, Inc.
 Footer navigation
