@@ -70,10 +70,7 @@ apache.yml
   - name: check system resources
     shell: df -h
 
-4. Roles
-5. Loops
-6. Condition
-7. Variable
+
 How to Create Inventory file
 IP Address ansible_user=ec2-user ansible_ssh_private_key_file=/tmp/ansible.pem
 This is the way will write all our IP Address in the inventory file. if the instance you created is ubuntu then it will be ansible_user=ubuntu and make sure 
@@ -167,9 +164,74 @@ This is the playbook to deploy the key to all server so you can access them henc
     service:
       name=sshd
       state=restarted
-This will enable you to ssh into the server without using any key
+     
+     This will enable you to ssh into the server without using any key
 
-All ansible secret and confidental data is stored is ANSIBLE VAULT
+      
+      
+4. Roles
+5. Loops
+6. Condition
+7. Variable: This is use to pass a password in ansible. Foe example if using a password to access a user in the host file, you wont write the password itself out in the host file. It will be written in variable ed "{{password}}" and you will create a variable group_var directory in etc/ansible path using mkdir etc/ansible/group_var then create a file in the group_var by vi  etc/ansible/group_var/all_var write Password as it was written in the host file and the password in front of it e.g password= admin if "{{Name}}" was the variable written in the  host file then in the all_var file it will be written as Name = admin
+To use imperative method to pass it
+ansible kops -m ping -i hosts --extra-vars "password=admin"
+
+using playbook
+vars.yml 
+---
+- hosts: db
+  vars:
+    name: From Playbook
+    password: dev@123
+  tasks:
+  - name:  demo vars
+    debug:
+      msg: "{{name}}"
+  - name: vars demo2
+    debug:
+      msg: "{{password}}"
+
+
+  ansible-playbook vars.yml --extra-vars "password=admin"
+  ansible-playbook apache.yml  --extra-vars "password=admin"
+---
+
+Variables:
+  1. runtime variables 
+  2. playbook variables 
+  3. host_vars variables 
+  4. group_vars variables
+
+ansible kops -m ping -i hosts --extra-vars "password=admin123"
+ mkdir /etc/ansible/group_vars/
+ mkdir /etc/ansible/db_vars/
+ mkdir /etc/ansible/app_vars/
+ mkdir /etc/ansible/all_vars/
+
+ANSIBLE VAULT.:
+=============== 
+stores confidential or secrets  data.   
+
+hashicorp VAULT.:
+
+It is use to create and store secrets in ansible.
+
+ansible-vault encrypt /etc/ansible/group_vars/all.yml (this will encrypt  the password in the all.yml file)
+
+ansible-vault decrypt /etc/ansible/group_vars/all.yml
+
+ansible-vault view /etc/ansible/group_vars/all.yml
+ansible-vault edit /etc/ansible/group_vars/all.yml
+ansible-vault rekey /etc/ansible/group_vars/all.yml
+ansible-vault create  /etc/ansible/group_vars/all.yml
+
+ansible k8s -m ping --ask-vault-pass
+ansible k8s -m shell -a "kubectl get po " --ask-vault-pass (it can be run like this and this will ask you to enter the password encrypted)
+
+ansible k8s -m ping --vault-password=admin ( You are passing the password directly here)
+ansible-vault decrypt /etc/ansible/group_vars/all.yml --vault-password=vaultpass
+
+
 Footer
 © 2022 GitHub, Inc.
 Footer navigation
