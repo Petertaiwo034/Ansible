@@ -85,21 +85,21 @@ sudo chown ansible -R /etc/ansible/
 Now vi into /etc/ansible/hosts and paste this all your host Ip 
 
 [db]
-54.175.186.47 ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem 
-172.31.81.212 ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem
+    54.175.186.47 ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem 
+    172.31.81.212 ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem
 
 [web]
-172.31.87.249 ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
-172.31.82.102 ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem
-54.84.32.131  ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem
+    172.31.87.249 ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
+    172.31.82.102 ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem
+    54.84.32.131  ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem
 
 [app]
-52.91.235.177 ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
-172.31.87.249 ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
+    52.91.235.177 ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
+    172.31.87.249 ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
 
 you can also user a sever username and password
 [k8s]
-172.31.87.249 ansible_user=kops    ansible_password=your password you created
+    172.31.87.249 ansible_user=kops    ansible_password=your password you created
 
 You can also create a custom host file by just vi into host(this can be any name) and paste all your host IP address in there just like it's above
 when you want to run any command using the custom host file pass "-i name of the custom file (-i host)"
@@ -131,7 +131,8 @@ After the playbook has been run successful, you can go back to the default hosts
 172.31.87.249 #ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
 
 This is the playbook to deploy the key to all server so you can access them hence forth without passing key
-hosts: all
+- hosts: all
+  become: true
   tasks:
   - name: Create Ansible User
     user:
