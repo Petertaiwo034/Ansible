@@ -232,6 +232,229 @@ ansible k8s -m ping --vault-password=admin ( You are passing the password direct
 ansible-vault decrypt /etc/ansible/group_vars/all.yml --vault-password=vaultpass
 
 
+
+
+**Playbook composition:
+
+  **1. plays = - hosts: dev 
+**  2. tasks **
+**  3. handlers**  
+**  4. modules = **
+      **  yum / file / apt / copy / template / script / lineinfile
+        package / shell / setup / command / ping / authorized_keys
+  **5. loops****
+ ** 6. conditions**
+**  7. variables**
+**  8. roles**   ****
+pb.yml:
+======
+- hosts: web
+  become: true
+  gather_facts: false 
+  tasks:
+  - name: install apache  
+    yum: name=httpd state=latest
+    notify:
+    - start apache 
+    ignore_errors: true 
+    tags:
+    - install     
+  - name: copy index.html   
+    template: src=app/index.html  dest=/var/www/html/    
+    tags:
+    - copy  
+   name: dynamic content   
+   debug: 
+     msg: "{{index}}"
+   tags:
+   - index  
+  handlers:
+  - name: start apache  
+    service: name=httpd state=started 
+    tags:
+    - start   
+**To run the paybook using tag to run a specific task  and the variable passed under debug
+ansible-playbook "name of the yaml file" --tags copy -e "index=test"**
+index.html
+<p1> Welcome to LandmarkTechnology  </p1>
+
+**How can specific tasks be runned in a playbooks?
+1. ansible-playbook apache.yml  --step
+2. assign tags to tasks **
+
+ansible-playbook apache.yml  --skip-tags 'install,start'
+ansible-playbook apache.yml --tags 'install'
+ansible-playbook apache.yml --tags 'copy'
+ansible all -m setup
+
+ansible-playbook tag.yml  --skip-tags 'install,index' -e "index=Landmark"
+ansible-playbook tag.yml  --extra-vars "index=test"
+
+
+ansible-playbook apache.yml  --syntax-check
+what is dry run in ansible?
+ansible-playbook apache.yml  --check  =# dry run
+ansible-playbook apache.yml  --step
+ansible-playbook apache.yml  --list-hosts
+
+What is verbose mode in ansible? -v -vv -vvv
+ansible-playbook apache.yml -v 
+
+    kubectl create ns dev -v=7  
+
+**What is the difference between tasks and handlers?:
+Tasks are executed by default from top to bottom.
+Some tasks has to notify handlers. 
+Handler will be executed only if the tasks changes.
+**
+Difference b/w copy and template module? :  
+  template module copy both static and dynamic file content 
+  copy modules copies only static file content 
+
+Which module does gather_facts uses? setup
+We can refer variables in ansible-playbook  using this ginger template -- {{}}  
+
+This is {{ class }}
+
+LandmarkTechnology
+
+Ansible role --> 
+  It's is a set of tasks, handlers, variables, files and other 
+  components organised in a predefined structure to configured specific 
+  requirements. It is easy to understand, maintained and shared.
+  Roles are used in ansible-playbooks
+
+- hosts: all
+  become: yes
+  roles:
+   - httpd
+
+ansible-galaxy init httpd
+ansible localhost -m yum -a "name=tree state=latest" -b
+
+httpd/
+├── defaults
+│   └── main.yml
+├── files
+├── handlers
+│   └── main.yml
+├── meta
+│   └── main.yml
+├── README.md
+├── tasks
+│   └── main.yml
+├── templates
+├── tests
+│   ├── inventory
+│   └── test.yml
+└── vars
+    └── main.yml
+
+https://github.com/LandmakTechnology/AnsiblePlaybooks
+https://github.com/LandmakTechnology/AnsibleRoles
+
+
+Ansible
+=======
+ansible-galaxy and Roles  --- helm  
+Dynamic Inventory  
+hosts file:
+  default hosts file  
+  custom hosts file 
+  dynamic host  file  
+Tomcat 
+Jenkins 
+Kubernets -   
+
+
+Dynamic Inventory:
+=================
+Dynamic Inventory uses scripts and Plugins to classify hosts from a cloud provider.
+ scripts:
+    ec2.py  and 
+    ec2.ini 
+ Plugins:
+  ec2   
+
+sudo yum -y install python3-pip
+sudo apt -y install python3-pip
+pip3 install boto3 botocore --user
+pip3 install --upgrade requests --user
+
+  Ansible will fetch and group servers/hosts/ec2  
+
+
+Assign an IAM role to your Ansible control server with:
+  require permissions to group servers in aws   
+
+
+plugin: aws_ec2
+aws_access_key: AKIAVA7MDXUTQKZMK3IS
+aws_secret_key: ePC63m+v5HelXInbf5g8TXm3izKidlfdZ7P/yXST
+regions:
+  - us-east-1
+  - us-east-2
+filters:
+  instance-state-name : running
+keyed_groups:
+  - key: tags.Name
+    prefix: ""
+    separator: ""
+hostnames:
+  - private-ip-address
+compose:
+  ansible_host: private_ip_address
+
+ dynamic inventory file for ec2-plugin must be names as:
+     *aws_ec2.yml , app-aws_ec2.yml  
+
+Jenkins - ansible integration 
+
+sudo yum install java-1.8.0-openjdk -y
+sudo yum install java-11-openjdk-devel -y 
+
+
+ansible all -i di-aws_ec2.yml -m ping -u ec2-user
+ansible-inventory --graph -i dynamic-inventory-aws_ec2.yml   
+ansible-inventory --graph -i dynamic-inventory-aws_ec2.yml
+ansible all -i dynamic-inventory-aws_ec2.yml -m ping -u ubuntu --private-key=/tmp/key.pem
+ansible-playbook ping.yml -i dynamic-inventory-aws_ec2.yml  --private-key=/tmp/key.pem -l app
+ansible-playbook ping.yml -i dynamic-inventory-aws_ec2.yml -u ubuntu --private-key=/tmp/key.pem -l kops
+
+---
+- hosts: all
+  gather_facts: no
+  remote_user: ec2-user
+  tasks:
+    - name: Test connection
+      ping:
+      remote_user: ec2-user
+...
+
+[app]
+172.31.80.9  
+172.31.80.9 ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/key.pem  
+172.31.80.9 ansible_user=ec2-user ansible_password=admin123  
+
+ssh-private-key  
+ssh -i demo.pem ubuntu@172.31.80.9  
+
+ansible-playbook test.yml -i di-aws_ec2.yml -u ubuntu --private-key=/tmp/key.pem  
+ansible-playbook test.yml -i di-aws_ec2.yml -u ec2-user --private-key=/tmp/key.pem -l app  
+ansible-playbook test.yml -i di-aws_ec2.yml -u ec2-user --private-key=/tmp/key.pem --limit app 
+
+
+jenkins-ansible integration  
+ansible-playbook tomcat.yml -i di-aws_ec2.yml  -u ec2-user --private-key=/tmp/key.pem -l tomcat 
+
+CP = 
+CM = 
+
+BootCamp = Tomorrow 7pm - 11pm  
+            Tuesday  
+            Mondays  
+
+
 Footer
 © 2022 GitHub, Inc.
 Footer navigation
