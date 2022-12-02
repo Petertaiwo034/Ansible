@@ -172,7 +172,7 @@ This is the playbook to deploy the key to all server so you can access them henc
 4. Roles
 5. Loops
 6. Condition
-7. Variable: This is use to pass a password in ansible. Foe example if using a password to access a user in the host file, you wont write the password itself out in the host file. It will be written in variable ed "{{password}}" and you will create a variable group_var directory in etc/ansible path using mkdir etc/ansible/group_var then create a file in the group_var by vi  etc/ansible/group_var/all_var write Password as it was written in the host file and the password in front of it e.g password= admin if "{{Name}}" was the variable written in the  host file then in the all_var file it will be written as Name = admin
+7. Variable: This is use to pass a password in ansible. For example if using a password to access a user in the host file, you wont write the password itself out in the host file. It will be written in variable  "{{password}}" and you will create a variable group_var directory in etc/ansible path using mkdir etc/ansible/group_var then create a file in the group_var by vi  etc/ansible/group_var/all_var write Password as it was written in the host file and the password in front of it e.g password= admin if "{{Name}}" was the variable written in the  host file then in the all_var file it will be written as Name = admin
 To use imperative method to pass it
 ansible kops -m ping -i hosts --extra-vars "password=admin"
 
