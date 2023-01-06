@@ -18,6 +18,51 @@ sudo apt install ansible -y
 when you run ansible --version
 You  will get the config file path= /etc/ansible/ansible.cfg
                    host file path= /etc/ansible/hosts
+                   
+                   
+How to Create Inventory file
+IP Address ansible_user=ec2-user ansible_ssh_private_key_file=/tmp/ansible.pem
+This is the way will write all our IP Address in the inventory file. if the instance you created is ubuntu then it will be ansible_user=ubuntu and make sure 
+the key you will be using to created all the server will be the same
+Change the permission of the file to ansible user using
+run the command ls -l /etc/ansible/hosts to see who own the file
+sudo chown ansible -R /etc/ansible/
+You have to copy the ansible.pem key and vi into the /tmp/ansible.pem to paste the key so you can ssh using the key. 
+
+Now vi into /etc/ansible/hosts and paste this all your host Ip 
+
+[db]
+    54.175.186.47 ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem 
+    172.31.81.212 ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem
+
+[web]
+    172.31.87.249 ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
+    172.31.82.102 ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem
+    54.84.32.131  ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem
+
+[app]
+    52.91.235.177 ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
+    172.31.87.249 ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
+
+you can also user a sever username and password
+[k8s]
+    172.31.87.249 ansible_user=kops    ansible_password=your password you created
+
+You can also create a custom host file by just vi into host(this can be any name) and paste all your host IP address in there just like it's above
+when you want to run any command using the custom host file pass "-i name of the custom file (-i host)"
+
+
+vi  /etc/ansible/ansible.cfg
+You will see a link in there to see the full file on github
+Copy the file and paste in the vi /etc/ansible/ansible.cfg
+Now search for the host key to seach without pressing the the I for insert write (/host_key) at the bottom of the file
+Uncomment the line with the host key by deleting the # (pounds) commands
+Now when you run ansible db -m ping it won't ask for permission any more
+You have to create the ansible key in the /tmp
+vi into /tmp/ansible.pem and paste the key in there
+change the permission of the key using "sudo chmod 400 /tmp/ansible.pem
+
+Note to run any thing in ansible that need elevated right and permission at th end of the command just pass "-b"
   Ansible concepts are:
 1.  Ansible commands
          To check if serves are alive or not= ansible all -m ping ( if I want to check my dbserver is okay I will run ansible db -m ping)
@@ -71,48 +116,7 @@ apache.yml
     shell: df -h
 
 
-How to Create Inventory file
-IP Address ansible_user=ec2-user ansible_ssh_private_key_file=/tmp/ansible.pem
-This is the way will write all our IP Address in the inventory file. if the instance you created is ubuntu then it will be ansible_user=ubuntu and make sure 
-the key you will be using to created all the server will be the same
-Change the permission of the file to ansible user using
-run the command ls -l /etc/ansible/hosts to see who own the file
-sudo chown ansible -R /etc/ansible/
 
-Now vi into /etc/ansible/hosts and paste this all your host Ip 
-
-[db]
-    54.175.186.47 ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem 
-    172.31.81.212 ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem
-
-[web]
-    172.31.87.249 ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
-    172.31.82.102 ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem
-    54.84.32.131  ansible_user=ec2-user  ansible_ssh_private_key_file=/tmp/ansible.pem
-
-[app]
-    52.91.235.177 ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
-    172.31.87.249 ansible_user=ubuntu    ansible_ssh_private_key_file=/tmp/ansible.pem
-
-you can also user a sever username and password
-[k8s]
-    172.31.87.249 ansible_user=kops    ansible_password=your password you created
-
-You can also create a custom host file by just vi into host(this can be any name) and paste all your host IP address in there just like it's above
-when you want to run any command using the custom host file pass "-i name of the custom file (-i host)"
-
-
-vi  /etc/ansible/ansible.cfg
-You will see a link in there to see the full file on github
-Copy the file and paste in the vi /etc/ansible/ansible.cfg
-Now search for the host key to seach without pressing the the I for insert write (/host_key) at the bottom of the file
-Uncomment the line with the host key by deleting the # (pounds) commands
-Now when you run ansible db -m ping it won't ask for permission any more
-You have to create the ansible key in the /tmp
-vi into /tmp/ansible.pem and paste the key in there
-change the permission of the key using "sudo chmod 400 /tmp/ansible.pem
-
-Note to run any thing in ansible that need elevated right and permission at th end of the command just pass "-b"
 
 
 How to export ssh into which host manually/locally
