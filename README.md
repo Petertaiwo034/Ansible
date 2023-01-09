@@ -62,7 +62,9 @@ You have to create the ansible key in the /tmp
 vi into /tmp/ansible.pem and paste the key in there
 change the permission of the key using "sudo chmod 400 /tmp/ansible.pem
 
-In case your server has a password already and in your host file you only included the IP Address. When you want to run your ansible playbook or any command you have to inculude -k and the will ask for the ssh password and you can enter it e.g ansible all -m ping -k. You can use imperative command also to connect more than two or three server at the same time. For example in your host file you have [db] [web] and  [App] if you want to use imperative method using command your use ansible db:web:app -m ping -k and this will connect all the server together. 
+In case your server has a password already and in your host file you only included the IP Address. When you want to run your ansible playbook or any command you have to inculude -k and the will ask for the ssh password and you can enter it e.g ansible all -m ping -k. You can use imperative command also to connect more than two or three server at the same time. For example in your host file you have [db] [web] and  [App] if you want to use imperative method using command your use ansible db:web:app -m ping -k and this will connect all the server together.
+
+You can also connect to a particular user created in a server. For example in [db] server a user named sammy was created and a password. In ansible controller server, if you want to configure a file in the db server to a specific user like sammy in your command you have to include -u name of the user and the password as not been included in the host file you have to include -k to your command so this will ask for ssh password. ansible db -m ping -u sammy  
 
 Note to run any thing in ansible that need elevated right and permission at th end of the command just pass "-b"
   Ansible concepts are:
