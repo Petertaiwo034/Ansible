@@ -56,7 +56,7 @@ vi  /etc/ansible/ansible.cfg
 You will see a link in there to see the full file on github
 Copy the file and paste in the vi /etc/ansible/ansible.cfg
 Now search for the host key to seach without pressing the the I for insert write (/host_key) at the bottom of the file
-Uncomment the line with the host key by deleting the # (pounds) commands
+Uncomment the line with the host key by deleting the # (pounds) commands and change from true to false
 Now when you run ansible db -m ping it won't ask for permission any more
 You have to create the ansible key in the /tmp
 vi into /tmp/ansible.pem and paste the key in there
